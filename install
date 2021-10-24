@@ -1,0 +1,5 @@
+#!/bin/bash
+
+chmod +x shell shellc up
+cp shell shellc up /usr/local/bin/
+sudo apt-get install xclip
