@@ -8,9 +8,9 @@ use with `shell <language>`
 
 ## Installing
 
-`shell` and `up` require putting the file into your `PATH`, such as `/usr/local/bin` or `/usr/localsbin`.
+`shell` and `up` require putting the file into your `PATH`, such as `/usr/local/bin`.
 
-`shellc` requires installing xclip for:
+`shellc` requires installing xclip:
 
 `sudo apt-get install xclip`
 ```
