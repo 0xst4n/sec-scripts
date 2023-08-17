@@ -12,4 +12,5 @@ interface=tun0
 port=80
 ip=$(/sbin/ip -o -4 addr list $interface | awk '{print $4}' | cut -d/ -f1)
 echo -e "Running on ${GREEN}$ip${NC}"
+echo -e $ip | xclip -selection c
 python3 -m http.server $port
