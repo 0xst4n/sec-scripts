@@ -6,3 +6,4 @@ sudo apt-get install xclip
 
 sudo apt install seclists wfuzz gobuster feroxbuster ffuf
 gunzip /usr/share/wordlists/rockyou.txt.gz
+sudo updatedb.plocate
