@@ -10,5 +10,5 @@ sudo updatedb.plocate
 mkdir /home/me/thm /home/me/htb
 rm -rf /home/me/Music /home/me/Public /home/me/Templates /home/me/Videos
 mkdir /home/me/tools
-wget https://github.com/carlospolop/PEASS-ng/releases/latest/download/linpeas.sh /home/me/tools/linpeas.sh
-wget https://github.com/DominicBreuker/pspy/releases/latest/download/pspy64s /home/me/tools/pspy64s
+wget https://github.com/carlospolop/PEASS-ng/releases/latest/download/linpeas.sh -O /home/me/tools/linpeas.sh
+wget https://github.com/DominicBreuker/pspy/releases/latest/download/pspy64s -O /home/me/tools/pspy64s
